@@ -21,7 +21,6 @@ new bool:kolay = false;
 new hptank = 600;
 new hpboomer = 50;
 new Float:spawnnpc = 10.0;
-new ready[MAXPLAYERS];
 new num; //hazır oolanların sayısı
 new count4;
 new oylar[MAXPLAYERS];
@@ -463,23 +462,6 @@ public Action:npc3(Handle:timer, any:id)
 
 npczombie()
 {
-	/*
-	 decl String:map[256];
-	 GetCurrentMap(map, sizeof(map));
-	 
-	 if(strcmp(map, "ctf_2fort"))
-	 {
-	 	furnitureorigin şu olsun bu olsun
-	 }
-	 
-	 else if(strcmp(map, "zom_military_v21"))
-	 {
-	 	furnitureorigin şu olsun bu olsun
-	 }
-	
-	*/
-	
-	//setpos 43.815361 -544.326233 -121.120537
 	
 	new z1 = CreateEntityByName("tf_zombie");
 	new entcount = -1;
@@ -492,15 +474,6 @@ npczombie()
 			DispatchSpawn(z1);
 		}
 	}
-	
-	/*
-    new Handle:hWearable = TF2Items_CreateItem(OVERRIDE_ALL|FORCE_GENERATION);
-	TF2Items_SetQuality(hWearable, 10);
-	TF2Items_SetLevel(hWearable, 0);
-	TF2Items_SetItemIndex(hWearable, 5625);
-	TF2Items_SetClassname(hWearable, "tf_wearable");
-	CloseHandle(hWearable);
-    */
 	
 	decl Float:FurnitureOrigin[3];
 	FurnitureOrigin[0] = 45.193310;
@@ -517,10 +490,8 @@ npczombie()
 	SetEntProp(z1, Prop_Send, "m_fEffects", EF_BONEMERGE | EF_NOSHADOW | EF_PARENT_ANIMATES | EF_BONEMERGE_FASTCULL);
 	SetEntityRenderColor(z1, 0, 255, 0, 0);
 	EmitSoundToAll("left4fortress/zincoming_mob.mp3", z1);
-	//SDKHook(z1, SDKHook_Spawn, Spawn);
 }
 
-//tank
 npczombie2()
 {
 	new z = CreateEntityByName("tf_zombie");
@@ -531,7 +502,6 @@ npczombie2()
 			DispatchSpawn(z);
 		}
 	}
-	//setang 45.193310 86.888908 0.000000
 	
 	decl Float:FurnitureOrigin[3];
 	FurnitureOrigin[0] = 45.193310;
@@ -557,7 +527,6 @@ npczombie2()
 	SetEntityRenderColor(z, 255, 0, 0, 0);
 }
 
-//boomer
 npczombie3()
 {
 	new z = CreateEntityByName("tf_zombie");
@@ -569,7 +538,6 @@ npczombie3()
 			DispatchSpawn(z);
 		}
 	}
-	
 	decl Float:FurnitureOrigin[3];
 	FurnitureOrigin[0] = 45.193310;
 	FurnitureOrigin[1] = 86.888908;
@@ -589,8 +557,6 @@ npczombie3()
 	{
 		hpboomer = hpboomer + 200;
 	}
-	
-	
 	TeleportEntity(z, FurnitureOrigin, NULL_VECTOR, NULL_VECTOR);
 	SetEntProp(z, Prop_Data, "m_iHealth", hpboomer);
 	SetEntProp(z, Prop_Send, "m_bGlowEnabled", 1);
@@ -603,8 +569,6 @@ npczombie3()
 	}
 	
 }
-
-//m_nModelIndex
 
 votemenu()
 {
@@ -622,15 +586,6 @@ votemenu()
 		}
 	}
 }
-
-//ÖNEMLİ BAK SİLME BUNU
-
-//setpos 91.684654 114.549309 200.696106
-
-//velet zombileri öldürmek amaçlı gerek yok onlara 
-//velet zombiler = velet iskeletler
-//zombi = iskelet
-//normal iskelet ölünce spawnlanıyorlar veletler
 public OnEntityCreated(entity, const String:classname[])
 {
 	CreateTimer(0.00001, timerDestroy, entity, TIMER_FLAG_NO_MAPCHANGE);
@@ -639,14 +594,15 @@ public OnEntityCreated(entity, const String:classname[])
 public Action:timerDestroy(Handle:timer, any:entity)
 {
 	decl String:name[64];
-	GetEntityClassname(entity, name, sizeof(name));
-	if (StrEqual(name, "tf_zombie", false))
+	if(dalgaktif)
+	{
+		GetEntityClassname(entity, name, sizeof(name));
+        }
+	if (dalgaktif && IsValidEntity(entity) && StrEqual(name, "tf_zombie", false))
 	{
 		new Float:size = GetEntPropFloat(entity, Prop_Data, "m_flModelScale");
 		if (size >= 1.0)
 		{
-			//Dalga bitti ve kalan zombiler var onları öldür.
-			
 			if (dalgarasi && !hazirlik && !dalgaktif)
 			{
 				if (dalga >= 0 && !spawn && dalgarasi)
